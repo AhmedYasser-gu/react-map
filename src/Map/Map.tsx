@@ -41,12 +41,12 @@ const Map: React.FC<Gmap> = ({ mapType, mapControl: mapTypeControl = false}) => 
         await geocoder.geocode({ location: coordinate}, function (results, status) {
         });
     };
-
+// properties of the map
     const initMap = (zoomLevel: number, address: LatLng): void => {
         if (ref.current) {
             setMap(
                 new google.maps.Map(ref.current, {
-                    zoom: 12,
+                    zoom: 14,
                     center: address,
                     mapTypeControl: mapTypeControl,
                     streetViewControl: true,
