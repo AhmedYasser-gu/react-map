@@ -1,0 +1,10 @@
+.map-container {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+
+  &__map {
+    height: 80vh;
+    width: 80%;
+  }
+}
