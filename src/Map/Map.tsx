@@ -1,26 +1,27 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useRef, useState} from 'react';
 import './Map.scss';
-
-interface IMap {
+// props
+interface Gmap {
     mapType: google.maps.MapTypeId;
-    mapTypeControl?: boolean;
+    mapControl?: boolean;
 }
 
-type GoogleLatLng = google.maps.LatLng;
-type GoogleMap = google.maps.Map;
+type LatLng = google.maps.LatLng;
+type GMap = google.maps.Map;
 
-const Map: React.FC<IMap> = ({ mapType, mapTypeControl = false}) => {
+const Map: React.FC<Gmap> = ({ mapType, mapControl: mapTypeControl = false}) => {
 
     const ref = useRef<HTMLDivElement>(null);
-    const [map, setMap] = useState<GoogleMap>();
-
+    const [map, setMap] = useState<GMap>();
+// calls the defaulyMapStart , when the hook is not empty
     const startMap = (): void => {
         if (!map) {
             defaultMapStart();
         } 
     };
     useEffect(startMap, [map]);
-
+// calls initMap function
     const defaultMapStart = (): void => {
         const defaultAddress = new google.maps.LatLng(57.721000, 12.940250);
         initMap(4, defaultAddress);
@@ -35,13 +36,13 @@ const Map: React.FC<IMap> = ({ mapType, mapTypeControl = false}) => {
     };
     useEffect(initEventListener, [map]);
 
-    const coordinateToAddress = async (coordinate: GoogleLatLng) => {
+    const coordinateToAddress = async (coordinate: LatLng) => {
         const geocoder = new google.maps.Geocoder();
         await geocoder.geocode({ location: coordinate}, function (results, status) {
         });
     };
 
-    const initMap = (zoomLevel: number, address: GoogleLatLng): void => {
+    const initMap = (zoomLevel: number, address: LatLng): void => {
         if (ref.current) {
             setMap(
                 new google.maps.Map(ref.current, {
@@ -64,8 +65,8 @@ const Map: React.FC<IMap> = ({ mapType, mapTypeControl = false}) => {
     };
 
     return (
-        <div className="map-container">
-            <div ref={ref} className="map-container__map"></div>
+        <div className="map">
+            <div ref={ref} className="map__map"></div>
         </div>
     );
 };

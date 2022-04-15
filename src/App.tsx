@@ -4,8 +4,9 @@ import Map from './Map/';
 import {loadMapApi} from "./utils/GoogleMapsUtils";
 
 function App() {
+  // hook to render the map , make sure its loaded
     const [scriptLoaded, setScriptLoaded] = useState(false);
-
+  // runs when the App is mounted
     useEffect(() => {
         const googleMapScript = loadMapApi();
         googleMapScript.addEventListener('load', function () {
@@ -19,7 +20,7 @@ function App() {
             {scriptLoaded && (
                 <Map
                   mapType={google.maps.MapTypeId.ROADMAP}
-                  mapTypeControl={true}
+                  mapControl={true}
                 />
             )}
         </div>
