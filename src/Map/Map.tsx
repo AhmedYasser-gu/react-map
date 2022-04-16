@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './Map.scss';
 // props
 interface Gmap {
@@ -7,29 +7,41 @@ interface Gmap {
     mapControl?: boolean;
 }
 
+interface IMarker {
+    address: string;
+    latitude: number;
+    longitude: number;
+}
 type LatLng = google.maps.LatLng;
 type GMap = google.maps.Map;
+type GoogleMarker = google.maps.Marker;
 
-const Map: React.FC<Gmap> = ({ mapType, mapControl: mapTypeControl = false}) => {
+const Map: React.FC<Gmap> = ({ mapType, mapControl: mapTypeControl = false }) => {
 
     const ref = useRef<HTMLDivElement>(null);
     const [map, setMap] = useState<GMap>();
-// calls the defaulyMapStart , when the hook is not empty
+    const [marker, setMarker] = useState<IMarker>();
+    const [homeMarker] = useState<GoogleMarker>();
+    const [setGoogleMarkers] = useState<GoogleMarker[]>([]);
+    const defaultAddress = new google.maps.LatLng(57.721000, 12.940250);
+    const [listenerIdArray, setListenerIdArray] = useState<any[]>([]);
+    // calls the defaulyMapStart , when the hook is not empty
     const startMap = (): void => {
         if (!map) {
             defaultMapStart();
-        } 
+        }
     };
+
     useEffect(startMap, [map]);
-// calls initMap function
+
+    // calls initMap function
     const defaultMapStart = (): void => {
-        const defaultAddress = new google.maps.LatLng(57.721000, 12.940250);
         initMap(4, defaultAddress);
     };
 
-    const initEventListener = ():void => {
+    const initEventListener = (): void => {
         if (map) {
-            google.maps.event.addListener(map, 'click', function(e) {
+            google.maps.event.addListener(map, 'click', function (e) {
                 coordinateToAddress(e.latLng);
             })
         }
@@ -38,16 +50,44 @@ const Map: React.FC<Gmap> = ({ mapType, mapControl: mapTypeControl = false}) => 
 
     const coordinateToAddress = async (coordinate: LatLng) => {
         const geocoder = new google.maps.Geocoder();
-        await geocoder.geocode({ location: coordinate}, function (results, status) {
+        await geocoder.geocode({ location: coordinate }, function (results, status) {
+            if (status === 'OK') {
+                setMarker({
+                    address: results[0].formatted_address,
+                    latitude: coordinate.lat(),
+                    longitude: coordinate.lng()
+                })
+            }
         });
     };
-// properties of the map
-    const initMap = (zoomLevel: number, address: LatLng): void => {
+
+    useEffect(() => {
+        if (marker) {
+            addMarker(new google.maps.LatLng(marker.latitude, marker.longitude));
+        }
+    });
+
+    const addMarker = (location: typeof defaultAddress): void => {
+        const marker: GoogleMarker = new google.maps.Marker({
+            position: location,
+            map: map,
+        });
+
+        setListenerIdArray(listenerIdArray => [...listenerIdArray,]);
+    };
+
+    useEffect(() => {
+        listenerIdArray.forEach((listenerId) => {
+            google.maps.event.removeListener(listenerId);
+        });
+    }, []);
+    // properties of the map
+    const initMap = (zoomLevel: number, YOUR_LATITUDE: LatLng): void => {
         if (ref.current) {
             setMap(
                 new google.maps.Map(ref.current, {
                     zoom: 14,
-                    center: address,
+                    center: YOUR_LATITUDE,
                     mapTypeControl: mapTypeControl,
                     streetViewControl: true,
                     rotateControl: true,
@@ -55,8 +95,8 @@ const Map: React.FC<Gmap> = ({ mapType, mapControl: mapTypeControl = false}) => 
                     fullscreenControl: true,
                     panControl: false,
                     zoomControl: true,
-                    gestureHandling: 'cooperative', 
-                    
+                    gestureHandling: 'cooperative',
+
                     mapTypeId: mapType,
                     draggableCursor: 'pointer',
                 })
