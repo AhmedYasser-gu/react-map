@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react';
 import './Map.scss';
 // props
@@ -12,7 +11,7 @@ interface IMarker {
     latitude: number;
     longitude: number;
 }
-type LatLng = google.maps.LatLng;
+type LatLng = google.maps.LatLng; 
 type GMap = google.maps.Map;
 type GoogleMarker = google.maps.Marker;
 
@@ -46,6 +45,7 @@ const Map: React.FC<Gmap> = ({ mapType, mapControl: mapTypeControl = false }) =>
             })
         }
     };
+    
     useEffect(initEventListener, [map]);
 
     const coordinateToAddress = async (coordinate: LatLng) => {
